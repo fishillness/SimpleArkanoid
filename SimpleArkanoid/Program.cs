@@ -2,6 +2,7 @@
 using SFML.System;
 using SFML.Window;
 using SFML.Graphics;
+using SFML.Audio;
 
 
 
@@ -20,6 +21,8 @@ class Program
     static Sprite stick;
     static Sprite[] blocks;
 
+    static Ball ball;
+
     public static void SetStartPosition()
     {
         int index = 0;
@@ -35,7 +38,7 @@ class Program
 
 
         stick.Position = new Vector2f(400, 500);
-
+        ball.sprite.Position = new Vector2f(375, 400);
     }
 
     static void Main(string[] args)
@@ -49,6 +52,7 @@ class Program
         blockTexture = new Texture("Block.png");
         stickTexture = new Texture("Stick.png");
 
+        ball = new Ball(ballTexture);
         stick = new Sprite(stickTexture);
         blocks = new Sprite[100];
         for (int i = 0; i < blocks.Length; i++) blocks[i] = new Sprite(blockTexture);
@@ -61,10 +65,26 @@ class Program
 
             window.DispatchEvents();
 
+            if (Mouse.IsButtonPressed(Mouse.Button.Left) == true)
+            {
+                ball.Start(5, new Vector2f(0, -1));
+            }
+            ball.Move(new Vector2i(0,0), new Vector2i(800, 600));
+
+            ball.CheckCollision(stick, "Stick");
+            for (int i = 0; i < blocks.Length; i++)
+            {
+               if(ball.CheckCollision(blocks[i], "Block") == true)
+                {
+                    blocks[i].Position = new Vector2f(1000, 1000);
+                    break;
+                }
+            }
+
             //Stick
             stick.Position = new Vector2f(Mouse.GetPosition(window).X - stick.Texture.Size.X * 0.5f, stick.Position.Y);
-
-
+ 
+            window.Draw(ball.sprite);
             window.Draw(stick);
             for (int i = 0; i < blocks.Length; i++)
             {
