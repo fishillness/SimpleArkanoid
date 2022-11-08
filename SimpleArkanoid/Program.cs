@@ -16,6 +16,8 @@ class Program
     static RenderWindow window;
     static Texture ballTexture;
     static Texture blockTexture;
+    static Texture strongBlockTexture;
+    static Texture crackedBlockTexture;
     static Texture stickTexture;
 
     static Sprite stick;
@@ -50,12 +52,26 @@ class Program
         // Load Textures
         ballTexture = new Texture("Ball.png");
         blockTexture = new Texture("Block.png");
+        strongBlockTexture = new Texture("StrongBlock.png");
+        crackedBlockTexture = new Texture("CrackedBlock.png");
         stickTexture = new Texture("Stick.png");
 
         ball = new Ball(ballTexture);
         stick = new Sprite(stickTexture);
         blocks = new Sprite[100];
-        for (int i = 0; i < blocks.Length; i++) blocks[i] = new Sprite(blockTexture);
+
+
+        Random rnd = new Random();
+
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            int randomNumber = rnd.Next(0, 20);
+
+            if (randomNumber == 13)
+                blocks[i] = new Sprite(strongBlockTexture);
+            else
+                blocks[i] = new Sprite(blockTexture);
+        }
 
         SetStartPosition();
 
@@ -76,12 +92,14 @@ class Program
             {
                if(ball.CheckCollision(blocks[i], "Block") == true)
                 {
-                    blocks[i].Position = new Vector2f(1000, 1000);
+                    if (blocks[i].Texture == strongBlockTexture)
+                        blocks[i].Texture = crackedBlockTexture;
+                    else
+                        blocks[i].Position = new Vector2f(1000, 1000);
                     break;
                 }
             }
 
-            //Stick
             stick.Position = new Vector2f(Mouse.GetPosition(window).X - stick.Texture.Size.X * 0.5f, stick.Position.Y);
  
             window.Draw(ball.sprite);
