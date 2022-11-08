@@ -25,6 +25,9 @@ class Program
 
     static Ball ball;
 
+    static int blocksNumber = 100;
+    static bool isWin = false;
+
     public static void SetStartPosition()
     {
         int index = 0;
@@ -38,7 +41,8 @@ class Program
             }
         }
 
-
+        isWin = false;
+        blocksNumber = 100;
         stick.Position = new Vector2f(400, 500);
         ball.sprite.Position = new Vector2f(375, 400);
     }
@@ -55,6 +59,11 @@ class Program
         strongBlockTexture = new Texture("StrongBlock.png");
         crackedBlockTexture = new Texture("CrackedBlock.png");
         stickTexture = new Texture("Stick.png");
+
+        Font font = new Font("comic.ttf");
+        Text win = new Text("Ты выиграл!", font);
+        win.Position = new Vector2f(300, 250);
+
 
         ball = new Ball(ballTexture);
         stick = new Sprite(stickTexture);
@@ -81,36 +90,55 @@ class Program
 
             window.DispatchEvents();
 
-            if (Mouse.IsButtonPressed(Mouse.Button.Left) == true)
+            if (isWin == false)
             {
-                ball.Start(5, new Vector2f(0, -1));
-            }
-            ball.Move(new Vector2i(0,0), new Vector2i(800, 600));
-
-            ball.CheckCollision(stick, "Stick");
-            for (int i = 0; i < blocks.Length; i++)
-            {
-               if(ball.CheckCollision(blocks[i], "Block") == true)
+                if (Mouse.IsButtonPressed(Mouse.Button.Left) == true)
                 {
-                    if (blocks[i].Texture == strongBlockTexture)
-                        blocks[i].Texture = crackedBlockTexture;
-                    else
-                        blocks[i].Position = new Vector2f(1000, 1000);
-                    break;
+                    ball.Start(7, new Vector2f(0, -1));
+                }
+                ball.Move(new Vector2i(0, 0), new Vector2i(800, 600));
+
+                ball.CheckCollision(stick, "Stick");
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    if (ball.CheckCollision(blocks[i], "Block") == true)
+                    {
+                        if (blocks[i].Texture == strongBlockTexture)
+                            blocks[i].Texture = crackedBlockTexture;
+                        else
+                        {
+                            blocks[i].Position = new Vector2f(1000, 1000);
+                            blocksNumber--;
+                        }
+                        break;
+                    }
+                }
+
+
+                stick.Position = new Vector2f(Mouse.GetPosition(window).X - stick.Texture.Size.X * 0.5f, stick.Position.Y);
+
+                window.Draw(ball.sprite);
+                window.Draw(stick);
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    window.Draw(blocks[i]);
                 }
             }
+            
 
-            stick.Position = new Vector2f(Mouse.GetPosition(window).X - stick.Texture.Size.X * 0.5f, stick.Position.Y);
- 
-            window.Draw(ball.sprite);
-            window.Draw(stick);
-            for (int i = 0; i < blocks.Length; i++)
+            if (blocksNumber == 0)
             {
-                window.Draw(blocks[i]);
+                window.Clear();
+                window.Draw(win);
+                isWin = true;
             }
 
+            if (isWin == true && Keyboard.IsKeyPressed(Keyboard.Key.R) == true)
+            {
+                SetStartPosition();
+            }
 
-            window.Display();
+                window.Display();
         }
 
     }
