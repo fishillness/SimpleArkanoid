@@ -2,14 +2,6 @@
 using SFML.System;
 using SFML.Window;
 using SFML.Graphics;
-using SFML.Audio;
-
-
-
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 class Program
 {
@@ -34,6 +26,8 @@ class Program
 
     public static void SetStartPositionFirstLevel()
     {
+        SetTexturesForBlocks();
+
         int index = 0;
         for (int y = 0; y < 10; y++)
         {
@@ -50,7 +44,7 @@ class Program
         level = 1;
         isWin = false;
         isLose = false;
-        blocksNumber = 60; //100;                                                                                                     ///////////////////////////////////////////////////////////
+        blocksNumber = 60;
         missesNumber = 0;
         stick.Position = new Vector2f(400, 500);
         ball.sprite.Position = new Vector2f(375, 400);
@@ -58,17 +52,17 @@ class Program
 
     public static void SetStartPositionSecondLevel()
     {
+        SetTexturesForBlocks();
+
         int index = 0;
         for (int y = 0; y < 10; y++)
         {
             for (int x = 0; x < 10; x++)
             {
-                Console.Write(index + " ");
                 blocks[index].Position = new Vector2f(x * (blocks[index].TextureRect.Width + 15) + 75,
                     y * (blocks[index].TextureRect.Height + 15) + 50);
                 index++;
             }
-            Console.WriteLine();
         }
 
         level = 2;
@@ -80,7 +74,20 @@ class Program
         ball.sprite.Position = new Vector2f(375, 400);
     }
 
-    
+    public static void SetTexturesForBlocks()
+    {
+        Random rnd = new Random();
+
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            int randomNumber = rnd.Next(0, 10);
+
+            if (randomNumber == 9)
+                blocks[i] = new Sprite(strongBlockTexture);
+            else
+                blocks[i] = new Sprite(blockTexture);
+        }
+    }
 
     static void Main(string[] args)
     {
@@ -88,7 +95,6 @@ class Program
         window.SetFramerateLimit(60);
         window.Closed += Window_Closed;
 
-        // Load Textures
         ballTexture = new Texture("Ball.png");
         blockTexture = new Texture("Block.png");
         strongBlockTexture = new Texture("StrongBlock.png");
@@ -116,19 +122,7 @@ class Program
         stick = new Sprite(stickTexture);
         blocks = new Sprite[100];
 
-
-        Random rnd = new Random();
-
-        for (int i = 0; i < blocks.Length; i++)
-        {
-            int randomNumber = rnd.Next(0, 20);
-
-            if (randomNumber == 13)
-                blocks[i] = new Sprite(strongBlockTexture);
-            else
-                blocks[i] = new Sprite(blockTexture);
-        }
-
+        SetTexturesForBlocks();
         SetStartPositionFirstLevel();
 
         while (window.IsOpen == true)
@@ -167,9 +161,6 @@ class Program
                     missesNumber++;
                 }
 
-
-
-
                 stick.Position = new Vector2f(Mouse.GetPosition(window).X - stick.Texture.Size.X * 0.5f, stick.Position.Y);
 
                 window.Draw(ball.sprite);
@@ -194,7 +185,8 @@ class Program
                 window.Draw(clickRforRestart);
                 isWin = true;
             }
-            if(blocksNumber == 0 && level == 2)
+            //проверка на выигрыш для второго уровня
+            if (blocksNumber == 0 && level == 2)
             {
                 window.Clear();
                 window.Draw(winSecondLevel);

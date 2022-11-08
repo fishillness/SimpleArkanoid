@@ -1,8 +1,5 @@
-﻿using System;
-using SFML.System;
-using SFML.Window;
+﻿using SFML.System;
 using SFML.Graphics;
-using SFML.Audio;
 
 class Ball
 {
