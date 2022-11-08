@@ -30,8 +30,9 @@ class Program
     static bool isLose = false;
     static int missesNumber = 0;
     static int attempts = 3;
+    static int level = 1;
 
-    public static void SetStartPosition()
+    public static void SetStartPositionFirstLevel()
     {
         int index = 0;
         for (int y = 0; y < 10; y++)
@@ -40,17 +41,46 @@ class Program
             {
                 blocks[index].Position = new Vector2f(x * (blocks[index].TextureRect.Width + 15) + 75,
                     y * (blocks[index].TextureRect.Height + 15) + 50);
+                if (y > 5)
+                    blocks[index].Position = new Vector2f(1000, 1000);
                 index++;
             }
         }
 
+        level = 1;
         isWin = false;
         isLose = false;
-        blocksNumber = 100;
+        blocksNumber = 60; //100;                                                                                                     ///////////////////////////////////////////////////////////
         missesNumber = 0;
         stick.Position = new Vector2f(400, 500);
         ball.sprite.Position = new Vector2f(375, 400);
     }
+
+    public static void SetStartPositionSecondLevel()
+    {
+        int index = 0;
+        for (int y = 0; y < 10; y++)
+        {
+            for (int x = 0; x < 10; x++)
+            {
+                Console.Write(index + " ");
+                blocks[index].Position = new Vector2f(x * (blocks[index].TextureRect.Width + 15) + 75,
+                    y * (blocks[index].TextureRect.Height + 15) + 50);
+                index++;
+            }
+            Console.WriteLine();
+        }
+
+        level = 2;
+        isWin = false;
+        isLose = false;
+        blocksNumber = 100;                                                                         
+        missesNumber = 0;
+        stick.Position = new Vector2f(400, 500);
+        ball.sprite.Position = new Vector2f(375, 400);
+    }
+
+    
 
     static void Main(string[] args)
     {
@@ -66,14 +96,20 @@ class Program
         stickTexture = new Texture("Stick.png");
 
         Font font = new Font("comic.ttf");
-        Text win = new Text("Ты выиграл!", font, 30);
-        win.Position = new Vector2f(300, 250);
+        Text winFirstLevel = new Text("Ты прошел первый уровень!", font, 30);
+        winFirstLevel.Position = new Vector2f(200, 250);
+        Text nextLevel = new Text("Нажмите \"N\" для перехода на следующий уровень", font, 20);
+        nextLevel.Position = new Vector2f(150, 300);
+        Text winSecondLevel = new Text("Ты прошел второй уровень!", font, 30);
+        winSecondLevel.Position = new Vector2f(200, 250);
+        Text returnFirstLevel = new Text("Нажмите \"T\" для возвращения на 1 уровень", font, 20);
+        returnFirstLevel.Position = new Vector2f(190, 300);
         Text lose = new Text("Ты проиграл!", font, 30);
         lose.Position = new Vector2f(300, 250);
+        Text clickRforRestart = new Text("Нажми \"R\" для перезапуска", font, 20);
+        clickRforRestart.Position = new Vector2f(260, 350);
         Text remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, 12);
         remainingAttempts.Position = new Vector2f(75, 550);
-        Text clickRforRestart = new Text("Нажми \"R\" для перезапуска", font, 20);
-        clickRforRestart.Position = new Vector2f(260, 300);
 
 
         ball = new Ball(ballTexture);
@@ -93,7 +129,7 @@ class Program
                 blocks[i] = new Sprite(blockTexture);
         }
 
-        SetStartPosition();
+        SetStartPositionFirstLevel();
 
         while (window.IsOpen == true)
         {
@@ -149,15 +185,24 @@ class Program
                 
             }
 
-            //проверка на выигрыш
-            if (blocksNumber == 0)
+            //проверка на выигрыш для первого уровня
+            if (blocksNumber == 0 && level == 1)
             {
                 window.Clear();
-                window.Draw(win);
+                window.Draw(winFirstLevel);
+                window.Draw(nextLevel);
                 window.Draw(clickRforRestart);
                 isWin = true;
             }
-
+            if(blocksNumber == 0 && level == 2)
+            {
+                window.Clear();
+                window.Draw(winSecondLevel);
+                window.Draw(returnFirstLevel);
+                window.Draw(clickRforRestart);
+                isWin = true;
+            }
+            //проверка на проигрыш
             if (missesNumber == attempts)
             {
                 window.Clear();
@@ -168,10 +213,21 @@ class Program
 
             if ((isWin == true || isLose == true) && Keyboard.IsKeyPressed(Keyboard.Key.R) == true)
             {
-                SetStartPosition();
+                if (level == 1)
+                    SetStartPositionFirstLevel();
+                if (level == 2)
+                    SetStartPositionSecondLevel();
+            }
+            if (isWin == true && level == 1 && Keyboard.IsKeyPressed(Keyboard.Key.N) == true)
+            {
+                SetStartPositionSecondLevel();
+            }
+            if (isWin == true && level == 2 && Keyboard.IsKeyPressed(Keyboard.Key.T) == true)
+            {
+                SetStartPositionFirstLevel();
             }
 
-                window.Display();
+            window.Display();
         }
 
     }
