@@ -1,4 +1,10 @@
 ﻿using System;
+using SFML.System;
+using SFML.Window;
+using SFML.Graphics;
+
+
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
