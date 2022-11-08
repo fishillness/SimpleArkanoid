@@ -27,6 +27,9 @@ class Program
 
     static int blocksNumber = 100;
     static bool isWin = false;
+    static bool isLose = false;
+    static int missesNumber = 0;
+    static int attempts = 3;
 
     public static void SetStartPosition()
     {
@@ -42,7 +45,9 @@ class Program
         }
 
         isWin = false;
+        isLose = false;
         blocksNumber = 100;
+        missesNumber = 0;
         stick.Position = new Vector2f(400, 500);
         ball.sprite.Position = new Vector2f(375, 400);
     }
@@ -61,8 +66,14 @@ class Program
         stickTexture = new Texture("Stick.png");
 
         Font font = new Font("comic.ttf");
-        Text win = new Text("Ты выиграл!", font);
+        Text win = new Text("Ты выиграл!", font, 30);
         win.Position = new Vector2f(300, 250);
+        Text lose = new Text("Ты проиграл!", font, 30);
+        lose.Position = new Vector2f(300, 250);
+        Text remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, 12);
+        remainingAttempts.Position = new Vector2f(75, 550);
+        Text clickRforRestart = new Text("Нажми \"R\" для перезапуска", font, 20);
+        clickRforRestart.Position = new Vector2f(260, 300);
 
 
         ball = new Ball(ballTexture);
@@ -90,7 +101,7 @@ class Program
 
             window.DispatchEvents();
 
-            if (isWin == false)
+            if (isWin == false && isLose == false)
             {
                 if (Mouse.IsButtonPressed(Mouse.Button.Left) == true)
                 {
@@ -114,6 +125,14 @@ class Program
                     }
                 }
 
+                //проверка на промах
+                if (ball.CheckMiss() == true)
+                {
+                    missesNumber++;
+                }
+
+
+
 
                 stick.Position = new Vector2f(Mouse.GetPosition(window).X - stick.Texture.Size.X * 0.5f, stick.Position.Y);
 
@@ -123,17 +142,31 @@ class Program
                 {
                     window.Draw(blocks[i]);
                 }
-            }
-            
+                remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, 12);
+                remainingAttempts.Position = new Vector2f(75, 550);
+                window.Draw(remainingAttempts);
 
+                
+            }
+
+            //проверка на выигрыш
             if (blocksNumber == 0)
             {
                 window.Clear();
                 window.Draw(win);
+                window.Draw(clickRforRestart);
                 isWin = true;
             }
 
-            if (isWin == true && Keyboard.IsKeyPressed(Keyboard.Key.R) == true)
+            if (missesNumber == attempts)
+            {
+                window.Clear();
+                window.Draw(lose);
+                window.Draw(clickRforRestart);
+                isLose = true;
+            }
+
+            if ((isWin == true || isLose == true) && Keyboard.IsKeyPressed(Keyboard.Key.R) == true)
             {
                 SetStartPosition();
             }

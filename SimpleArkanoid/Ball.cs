@@ -57,4 +57,14 @@ class Ball
         return false;
     }
 
+    public bool CheckMiss()
+    {
+        if (sprite.Position.Y >= 600)
+        {
+            sprite.Position = new Vector2f(375, 400);
+            speed = 0;
+            return true;
+        }
+        return false;
+    }
 }
