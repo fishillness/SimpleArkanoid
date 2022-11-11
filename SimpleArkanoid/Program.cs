@@ -101,21 +101,35 @@ class Program
         crackedBlockTexture = new Texture("CrackedBlock.png");
         stickTexture = new Texture("Stick.png");
 
+        uint headerSize = 30;
+        uint additionSize = 20;
+        uint infoSize = 12;
+        int firstLinePosY = 250;
+        int secondLinePosY = 300;
+        int thirdLinePosY = 350;
+        int infoLinePosY = 550;
+        int windowHalfWidth = Convert.ToInt32(window.Size.X) / 2;
+
         Font font = new Font("comic.ttf");
-        Text winFirstLevel = new Text("Ты прошел первый уровень!", font, 30);
-        winFirstLevel.Position = new Vector2f(200, 250);
-        Text nextLevel = new Text("Нажмите \"N\" для перехода на следующий уровень", font, 20);
-        nextLevel.Position = new Vector2f(150, 300);
-        Text winSecondLevel = new Text("Ты прошел второй уровень!", font, 30);
-        winSecondLevel.Position = new Vector2f(200, 250);
-        Text returnFirstLevel = new Text("Нажмите \"T\" для возвращения на 1 уровень", font, 20);
-        returnFirstLevel.Position = new Vector2f(190, 300);
-        Text lose = new Text("Ты проиграл!", font, 30);
-        lose.Position = new Vector2f(300, 250);
-        Text clickRforRestart = new Text("Нажми \"R\" для перезапуска", font, 20);
-        clickRforRestart.Position = new Vector2f(260, 350);
-        Text remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, 12);
-        remainingAttempts.Position = new Vector2f(75, 550);
+        Text winFirstLevel = new Text("Ты прошел первый уровень!", font, headerSize);
+        winFirstLevel.Position = new Vector2f(windowHalfWidth - winFirstLevel.DisplayedString.Length * winFirstLevel.CharacterSize / 4,
+            firstLinePosY);
+        Text winSecondLevel = new Text("Ты прошел второй уровень!", font, headerSize);
+        winSecondLevel.Position = new Vector2f(windowHalfWidth - winSecondLevel.DisplayedString.Length * winSecondLevel.CharacterSize / 4,
+            firstLinePosY);
+        Text lose = new Text("Ты проиграл!", font, headerSize);
+        lose.Position = new Vector2f(windowHalfWidth - lose.DisplayedString.Length * lose.CharacterSize / 4,
+            firstLinePosY);
+        Text nextLevel = new Text("Нажмите \"N\" для перехода на следующий уровень", font, additionSize);
+        nextLevel.Position = new Vector2f(windowHalfWidth - nextLevel.DisplayedString.Length * nextLevel.CharacterSize / 4,
+            secondLinePosY);        
+        Text returnFirstLevel = new Text("Нажмите \"T\" для возвращения на 1 уровень", font, additionSize);
+        returnFirstLevel.Position = new Vector2f(windowHalfWidth - returnFirstLevel.DisplayedString.Length * returnFirstLevel.CharacterSize / 4,
+            secondLinePosY);        
+        Text clickRforRestart = new Text("Нажми \"R\" для перезапуска", font, additionSize);
+        clickRforRestart.Position = new Vector2f(windowHalfWidth - clickRforRestart.DisplayedString.Length * clickRforRestart.CharacterSize / 4,
+            thirdLinePosY);         Text remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, infoSize);
+        remainingAttempts.Position = new Vector2f(75, infoLinePosY);
 
 
         ball = new Ball(ballTexture);
@@ -169,28 +183,24 @@ class Program
                 {
                     window.Draw(blocks[i]);
                 }
-                remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, 12);
-                remainingAttempts.Position = new Vector2f(75, 550);
+                remainingAttempts = new Text($"Оставшиеся попытки: {attempts - missesNumber}.", font, infoSize);
+                remainingAttempts.Position = new Vector2f(75, infoLinePosY);
                 window.Draw(remainingAttempts);
-
-                
             }
-
-            //проверка на выигрыш для первого уровня
-            if (blocksNumber == 0 && level == 1)
+            //проверка на выигрыш
+            if (blocksNumber == 0)
             {
                 window.Clear();
-                window.Draw(winFirstLevel);
-                window.Draw(nextLevel);
-                window.Draw(clickRforRestart);
-                isWin = true;
-            }
-            //проверка на выигрыш для второго уровня
-            if (blocksNumber == 0 && level == 2)
-            {
-                window.Clear();
-                window.Draw(winSecondLevel);
-                window.Draw(returnFirstLevel);
+                if (level == 1)
+                {
+                    window.Draw(winFirstLevel);
+                    window.Draw(nextLevel);
+                }
+                if (level == 2)
+                {
+                    window.Draw(winSecondLevel);
+                    window.Draw(returnFirstLevel);
+                }
                 window.Draw(clickRforRestart);
                 isWin = true;
             }

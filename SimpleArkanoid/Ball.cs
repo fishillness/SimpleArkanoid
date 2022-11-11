@@ -38,17 +38,17 @@ class Ball
     {
         if (this.sprite.GetGlobalBounds().Intersects(sprite.GetGlobalBounds()) == true)
         {
-            if (tag == "Stick")
+            switch (tag)
             {
-                direction.Y *= -1;
-                float f = ((this.sprite.Position.X + this.sprite.Texture.Size.X * 0.5f) - (sprite.Position.X + sprite.Texture.Size.X * 0.5f)) / sprite.Texture.Size.X * 0.5f;
-                direction.X = f * 2;
+                case "Stick":
+                    direction.Y *= -1;
+                    float f = ((this.sprite.Position.X + this.sprite.Texture.Size.X * 0.5f) - (sprite.Position.X + sprite.Texture.Size.X * 0.5f)) / sprite.Texture.Size.X * 0.5f;
+                    direction.X = f * 2;
+                    break;
+                case "Block":
+                    direction.Y *= -1;
+                    break;
             }
-            if (tag == "Block")
-            {
-                direction.Y *= -1;
-            }
-
             return true;
         }
         return false;
